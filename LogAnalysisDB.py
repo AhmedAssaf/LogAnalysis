@@ -1,8 +1,29 @@
+#!/usr/bin/env python3
+# 
 # Database code for the DB News
+#
 
 import psycopg2
 
 DBNAME = "news"
+
+def get_query_results(query):
+    """Connect to the PostgreSQL database. execute the query and Returns result."""
+    try:
+        db = psycopg2.connect("dbname={}".format(DBNAME))
+        c = db.cursor()
+        c.execute(query)
+        data = c.fetchall()
+        c.close()
+        db.close()
+        return data
+    except psycopg2.Error as e:
+        print "Unable to connect to database"
+        # Exit the program
+        sys.exit(1) 
+        # ToDO throw an error and catch it
+        #raise e
+
 
 def get_articles():
     """1. What are the most popular three articles of all time?."""
@@ -14,12 +35,7 @@ def get_articles():
     group by a.title 
     order by count(a.title) desc limit 3;
     """
-    db = psycopg2.connect(database=DBNAME)
-    cur = db.cursor()
-    cur.execute(query)
-    articles = cur.fetchall()
-    cur.close()
-    db.close()
+    articles = get_query_results(query)
     return articles
 
 def get_authors():
@@ -33,13 +49,8 @@ def get_authors():
     group by b.name 
     order by count(b.name) desc limit 4;
     """
-    db = psycopg2.connect(database=DBNAME)
-    cur = db.cursor()
-    cur.execute(query)
-    articles = cur.fetchall()
-    cur.close()
-    db.close()
-    return articles
+    authors = get_query_results(query)
+    return authors
 
 def get_requests_error():
     """3. On which days did more than 1% of requests lead to errors?"""
@@ -57,10 +68,5 @@ def get_requests_error():
     WHERE status = '404 NOT FOUND' 
     and ((rowscount*100)/totalcount) > 1;
     """
-    db = psycopg2.connect(database=DBNAME)
-    cur = db.cursor()
-    cur.execute(query)
-    articles = cur.fetchall()
-    cur.close()
-    db.close()
+    articles = get_query_results(query)
     return articles

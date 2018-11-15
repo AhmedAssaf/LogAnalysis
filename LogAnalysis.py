@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# 
+# Analyize the news db and getting information
+#
 
 from LogAnalysisDB import get_articles, get_authors ,get_requests_error
 
